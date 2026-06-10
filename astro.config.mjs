@@ -5,7 +5,7 @@ import starlight from '@astrojs/starlight';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://hermetic.pages.dev',
-	base: '/docs',
+	base: '/',
 	vite: {
 		cacheDir: false,
 		build: {
@@ -38,47 +38,47 @@ export default defineConfig({
 				{
 					label: 'Getting Started',
 					items: [
-						{ label: 'Introduction', link: '/docs/' },
-						{ label: 'Installation', link: '/docs/getting-started/install/' },
-						{ label: 'Quick Start', link: '/docs/getting-started/quickstart/' },
+						{ label: 'Introduction', slug: 'getting-started.md' },
+						{ label: 'Installation', slug: 'getting-started/install.md' },
+						{ label: 'Quick Start', slug: 'getting-started/quickstart.md' },
 					],
 				},
 				{
 					label: 'Pipeline',
 					items: [
-						{ label: 'Overview', link: '/docs/pipeline/' },
-						{ label: 'Import', link: '/docs/pipeline/import/' },
-						{ label: 'Curation', link: '/docs/pipeline/curate/' },
-						{ label: 'Format', link: '/docs/pipeline/format/' },
+						{ label: 'Overview', slug: 'pipeline.md' },
+						{ label: 'Import', slug: 'pipeline/import.md' },
+						{ label: 'Curation', slug: 'pipeline/curate.md' },
+						{ label: 'Format', slug: 'pipeline/format.md' },
 					],
 				},
 				{
 					label: 'Training',
 					items: [
-						{ label: 'Overview', link: '/docs/training/' },
-						{ label: 'MLX LoRA', link: '/docs/training/mlx/' },
-						{ label: 'Cloud Backends', link: '/docs/training/cloud/' },
+						{ label: 'Overview', slug: 'training.md' },
+						{ label: 'MLX LoRA', slug: 'training/mlx.md' },
+						{ label: 'Cloud Backends', slug: 'training/cloud.md' },
 					],
 				},
 				{
 					label: 'Hermes Integration',
 					items: [
-						{ label: 'Overview', link: '/docs/hermes/' },
-						{ label: 'Plugin', link: '/docs/hermes/plugin/' },
+						{ label: 'Overview', slug: 'hermes.md' },
+						{ label: 'Plugin', slug: 'hermes/plugin.md' },
 					],
 				},
 				{
 					label: 'Reference',
 					items: [
-						{ label: 'Overview', link: '/docs/reference/' },
-						{ label: 'Config Schema', link: '/docs/reference/config/' },
+						{ label: 'Overview', slug: 'reference.md' },
+						{ label: 'Config Schema', slug: 'reference/config.md' },
 					],
 				},
 				{
 					label: 'Architecture',
 					items: [
-						{ label: 'Overview', link: '/docs/arch/' },
-						{ label: 'System Overview', link: '/docs/arch/overview/' },
+						{ label: 'Overview', slug: 'arch.md' },
+						{ label: 'System Overview', slug: 'arch/overview.md' },
 					],
 				},
 			],
