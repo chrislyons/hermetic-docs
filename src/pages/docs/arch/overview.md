@@ -1,0 +1,327 @@
+---
+title: Architecture Overview
+description: System design, data flow, and extension points
+---
+
+# Architecture Overview
+
+## High-Level Architecture
+
+```mermaid
+flowchart TB
+    subgraph Input["Input Layer"]
+        CE[ChatGPT Export]
+        CL[Claude Export]
+        GM[Gemini Takeout]
+        HE[Hermes Export]
+    end
+
+    subgraph Import["Import & Normalize"]
+        IR[Importer Registry]
+        CS[Conversation Schema]
+    end
+
+    subgraph Curate["Curation Pipeline"]
+        EX[Exact Dedup]
+        SE[Semantic Dedup]
+        PI[PII Redaction]
+        QF[Quality Filter]
+    end
+
+    subgraph Format["Format Converters"]
+        SG[ShareGPT]
+        DP[DPO]
+        GR[GRPO]
+        JL[JSONL]
+        AL[Alpaca]
+        HF[HF Datasets]
+    end
+
+    subgraph Train["Training Backends"]
+        MLX[MLX-Tune]
+        UN[Unsloth Modal]
+        AX[Axolotl]
+    end
+
+    subgraph Output["Artifacts"]
+        AD[Adapters .safetensors]
+        GC[GGUF Models]
+        MD[Metadata JSON]
+    end
+
+    subgraph Hermes["Hermes Integration"]
+        PL[Plugin CLI]
+        SK[Skill]
+        GW[Gateway Hot-swap]
+    end
+
+    CE --> IR
+    CL --> IR
+    GM --> IR
+    HE --> IR
+    IR --> CS
+    CS --> EX
+    EX --> SE
+    SE --> PI
+    PI --> QF
+    QF --> SG
+    QF --> DP
+    QF --> GR
+    QF --> JL
+    QF --> AL
+    QF --> HF
+    SG --> MLX
+    DP --> MLX
+    GR --> MLX
+    SG --> UN
+    DP --> UN
+    SG --> AX
+    DP --> AX
+    MLX --> AD
+    MLX --> GC
+    MLX --> MD
+    UN --> AD
+    UN --> GC
+    UN --> MD
+    AX --> AD
+    AX --> GC
+    AX --> MD
+    AD --> PL
+    GC --> PL
+    MD --> PL
+    AD --> SK
+    AD --> GW
+```
+
+## Core Components
+
+### 1. Import Layer (`hermetic/imports/`)
+
+| Component | Responsibility |
+|-----------|----------------|
+| `BaseImporter` | Abstract base class |
+| `ChatGPTImporter` | Parse `conversations.json` mapping structure |
+| `ClaudeImporter` | Parse `chat_messages` array |
+| `GeminiImporter` | Recursive Takeout folder scan |
+| `HermesImporter` | ShareGPT JSONL passthrough + validation |
+| `ImporterRegistry` | Auto-detection by file structure |
+
+**Output**: Normalized `Conversation` objects
+
+### 2. Core Schema (`hermetic/core/schema.py`)
+
+```python
+@dataclass
+class Message:
+    role: MessageRole        # USER, ASSISTANT, SYSTEM
+    content: str
+    metadata: dict = field(default_factory=dict)
+
+@dataclass
+class Conversation:
+    messages: List[Message]
+    system: str = ""
+    metadata: dict = field(default_factory=dict)
+    platform: Platform = Platform.UNKNOWN
+    platform_data: dict = field(default_factory=dict)  # Preserves original
+```
+
+**Key Design**: Platform fidelity preserved in `platform_data` for round-trip.
+
+### 3. Curation Pipeline (`hermetic/curation/`)
+
+| Stage | Algorithm | Complexity |
+|-------|-----------|------------|
+| Exact Dedup | SHA-256 content hash | O(n) |
+| Semantic Dedup | Sentence embeddings + cosine | O(n²) batched |
+| PII Redaction | Microsoft Presidio | O(n) |
+| Quality Filter | Heuristic rules | O(n) |
+
+### 4. Format Converters (`hermetic/formats/`)
+
+| Formatter | Output | Target |
+|-----------|--------|--------|
+| `ShareGPTFormatter` | `{"conversations": [...]}` | SFT |
+| `DPOFormatter` | `{"prompt", "chosen", "rejected"}` | DPO/KTO |
+| `GRPOFormatter` | `{"trajectory": [...]}` | RLHF |
+| `JSONLFormatter` | Line-delimited messages | Generic |
+| `AlpacaFormatter` | `{"instruction", "input", "output"}` | Legacy |
+| `HFFormatter` | HF Dataset rows | HF Trainer |
+
+### 5. Training Backends (`hermetic/training/`)
+
+| Backend | Implementation | Hardware |
+|---------|----------------|----------|
+| `MLXTuneBackend` | `mlx_lm.lora.train` + `fuse` | Apple Silicon |
+| `UnslothModalBackend` | Modal + Unsloth | NVIDIA (cloud) |
+| `AxolotlBackend` | Axolotl YAML config | NVIDIA (local/cloud) |
+
+**Abstract Interface**:
+```python
+class TrainingBackend(ABC):
+    @abstractmethod
+    def train(self, config: TrainingConfig, data: Any) -> TrainingResult: ...
+
+    @abstractmethod
+    def export(self, result: TrainingResult, config: TrainingConfig) -> TrainingResult: ...
+```
+
+### 6. CLI (`hermetic/cli/main.py`)
+
+Typer-based CLI with commands:
+- `import` — Import + curate + format
+- `detect` — Platform detection
+- `platforms` — List platforms
+- `formats` — List formats
+- `train` — Train LoRA
+- `curate` — Standalone curation
+
+### 7. Hermes Plugin (`hermes-plugin/`)
+
+| Component | Purpose |
+|-----------|---------|
+| `plugin.yaml` | Manifest with CLI commands + bundled skill |
+| `__init__.py` | `register(ctx)` — CLI commands + skill |
+| `hermetic/SKILL.md` | Skill documentation |
+
+## Data Flow
+
+### Import -> Curate -> Format
+
+```text
+Raw Export
+    |
+    v
+Importer.detect()  -->  Platform
+    |
+    v
+Importer.import()  -->  List[Conversation]
+    |
+    v
+Curator.curate()   -->  CuratedDatasetSplit (train/val/test)
+    |
+    v
+Formatter.format() -->  Format-specific files (JSONL)
+```
+
+### Train -> Export
+
+```text
+Format Files (ShareGPT)
+    |
+    v
+ChatDataset -> CacheDataset  (MLX format)
+    |
+    v
+mlx_lm.lora.train_model()
+    |
+    v
+Adapters: adapters.safetensors + adapter_config.json
+    |
+    v
+mlx_lm fuse --export-gguf  (if enabled)
+    |
+    v
+GGUF: model-q4_k_m.gguf
+```
+
+## Extension Points
+
+### 1. New Importer
+
+```python
+# hermetic/imports/newplatform.py
+from hermetic.imports.base import BaseImporter
+from hermetic.core.schema import Conversation
+
+class NewPlatformImporter(BaseImporter):
+    platform = Platform.NEWPLATFORM
+    
+    def can_import(self, path: Path) -> bool:
+        return path.name == "export.json"
+    
+    def import_file(self, path: Path) -> List[Conversation]:
+        # parse -> normalize
+        return conversations
+
+# Register in hermetic/imports/__init__.py
+IMPORTER_REGISTRY[Platform.NEWPLATFORM] = NewPlatformImporter
+```
+
+### 2. New Formatter
+
+```python
+# hermetic/formats/newformat.py
+from hermetic.formats import BaseFormatter
+
+class NewFormatFormatter(BaseFormatter):
+    name = "newformat"
+    
+    def format(self, conversations: List[Conversation], split: str) -> str:
+        # convert -> format string
+        return formatted_data
+
+# Register in hermetic/formats/__init__.py
+FORMATTER_REGISTRY["newformat"] = NewFormatFormatter
+```
+
+### 3. New Training Backend
+
+```python
+# hermetic/training/newbackend.py
+from hermetic.training import TrainingBackend, TrainingConfig, TrainingResult
+
+class NewBackend(TrainingBackend):
+    name = "new-backend"
+    
+    def train(self, config: TrainingConfig, data: Any) -> TrainingResult:
+        # train -> return result with adapter_path
+        return TrainingResult(success=True, adapter_path=...)
+
+# Register in hermetic/training/__init__.py
+BACKEND_REGISTRY["new-backend"] = NewBackend
+```
+
+## Configuration System
+
+```text
+hermetic.yaml (file)
+    |
+    v
+Pydantic Validation (config.py)
+    |
+    v
+Dataclasses:
+  ImportConfig
+  CurateConfig
+  FormatConfig
+  TrainConfig
+  OutputConfig
+    |
+    v
+Injected into components
+```
+
+## Security & Privacy
+
+| Concern | Mitigation |
+|---------|------------|
+| PII in exports | Presidio redaction (configurable) |
+| Local-only processing | No network calls in import/curate/train (MLX) |
+| Model weights | User controls base model source |
+| Training data | Never leaves user machine (local backend) |
+| Credentials | HF_TOKEN via env, never in config |
+
+## Performance Characteristics
+
+| Operation | 1K conversations | 10K conversations |
+|-----------|------------------|-------------------|
+| Import | ~2s | ~15s |
+| Exact Dedup | ~0.5s | ~3s |
+| Semantic Dedup | ~10s | ~2min |
+| PII Redaction | ~3ction | ~3s | ~30s |
+| Quality Filter | ~1s | ~10s |
+| Format (all) | ~2s | ~20s |
+| Train (8B, 1K steps) | ~20 min | ~3 hr |
+
+*Measured on 32GB M1 Max*

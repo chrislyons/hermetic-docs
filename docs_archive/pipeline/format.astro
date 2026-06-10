@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Format Converters" description="Convert normalized conversations to training-ready formats">
+
+<div class="docs-content">
+
+<header class="page-header">
+	<h1>Format Converters</h1>
+	<p class="description">Convert normalized conversations to training-ready formats</p>
+</header>
+
+## Output Formats
+
+ShareGPT: Multi-turn conversations for SFT training (Hermes, Unsloth, LLaMA-Factory)
+DPO: Preference pairs (chosen/rejected) for DPO, KTO, ORPO
+GRPO: Trajectories with rewards for GRPO, PPO, RLHF
+JSONL: Generic line-delimited format for custom pipelines
+Alpaca: Instruction/Input/Output for legacy Alpaca-style SFT
+HF: Hugging Face Datasets format for HF Trainer, PEFT
+
+## ShareGPT Format (text)
+
+```text
+conversations:
+  - from: human
+    value: What is MLX?
+  - from: gpt
+    value: MLX is Apple's array framework...
+system: You are a helpful assistant.
+metadata:
+  platform: chatgpt
+  source_conversation_id: abc-123
+```
+
+## DPO Format (text)
+
+```text
+prompt: What is MLX?
+chosen: MLX is Apple's array framework for machine learning...
+rejected: MLX is a graphics library.
+metadata:
+  platform: chatgpt
+  preference_source: synthetic
+```
+
+## GRPO Format (text)
+
+```text
+trajectory:
+  - role: user
+    content: Solve: 2+2
+  - role: assistant
+    content: 4
+    reward: 1.0
+  - role: user
+    content: Explain
+  - role: assistant
+    content: Addition combines...
+    reward: 0.8
+metadata:
+  task: math
+  platform: chatgpt
+```
+
+## JSONL Format
+
+```text
+{"messages": [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}], "metadata": {...}}
+{"messages": [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}], "metadata": {...}}
+```
+
+## Alpaca Format (text)
+
+```text
+instruction: What is MLX?
+input: (empty)
+output: MLX is Apple's array framework...
+metadata [platform is chatgpt]
+```
+
+## HF Datasets Format (text)
+
+```text
+# Python
+import datasets
+dataset = datasets.from_list([
+    {
+        "messages": ["..."],
+        "metadata": {"..."}
+    }
+])
+dataset.push_to_hub("user/hermetic-data")
+```
+
+## Format Comparison
+
+| Feature | ShareGPT | DPO | GRPO | JSONL | Alpaca | HF |
+|---------|----------|-----|------|-------|--------|-----|
+| Multi-turn | Yes | No | Yes | Yes | No | Yes |
+| Preferences | No | Yes | No | No | No | Yes |
+| Rewards | No | No | Yes | No | No | Yes |
+| System prompt | Yes | No | No | Yes | No | Yes |
+| Metadata | Yes | Yes | Yes | Yes | Yes | Yes |
+| Hermes native | Yes | Yes | Yes | Yes | No | Yes |
+| Unsloth native | Yes | Yes | No | Yes | Yes | Yes |
+| Axolotl native | Yes | Yes | Yes | Yes | Yes | Yes |
+
+## Choosing a Format
+
+Need SFT:           ShareGPT (default)
+Need DPO/KTO/ORPO:  DPO
+Need RLHF/PPO/GRPO: GRPO
+Custom pipeline:    JSONL
+Legacy Alpaca:      Alpaca
+HF Trainer/PEFT:    HF
+
+## CLI Usage
+
+```bash
+# Single format
+hermetic import ~/exports/chatgpt.json --format sharegpt
+
+# Multiple formats via config
+format:
+  primary: sharegpt
+  also: [dpo, grpo]
+```
+
+## Programmatic Usage
+
+```text
+from hermetic.formats import get_formatter
+
+formatter = get_formatter("sharegpt")
+output = formatter.format(conversations, split="train")
+
+# Or DPO
+dpo_formatter = get_formatter("dpo")
+pairs = dpo_formatter.format(conversations)
+```
+</BaseLayout>

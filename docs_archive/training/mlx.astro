@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="MLX LoRA Training" description="Local LoRA training on Apple Silicon with MLX">
+
+<div class="docs-content">
+
+<header class="page-header">
+	<h1>MLX LoRA Training</h1>
+	<p class="description">Local LoRA training on Apple Silicon with MLX</p>
+</header>
+
+## Overview
+
+MLX is Apple's native array framework. Hermetic's MLX backend (`mlx-tune`) provides:
+
+- **Native Apple Silicon** — No CUDA, no Docker, optimal Metal performance
+- **QLoRA 4-bit** — 7B/8B models on 32GB RAM
+- **LoRA/DoRA** — Configurable rank, alpha, target modules, layers
+- **GGUF Export** — Ready for Ollama, llama.cpp
+
+## Hardware Requirements
+
+| Model Size | Quantization | LoRA Layers | Peak RAM | Time (1K steps) |
+|------------|--------------|-------------|----------|-----------------|
+| 1.5B | 4-bit | 4-8 | ~3 GB | ~2 min |
+| 3B | 4-bit | 4-8 | ~5 GB | ~5 min |
+| 7B | 4-bit | 4 | ~10 GB | ~15 min |
+| 8B | 4-bit | 2-4 | ~10 GB | ~20 min |
+| 13B | 4-bit | 1-2 | ~16 GB | ~45 min |
+
+**Validated**: 32GB M1 Max — 8B QLoRA, 4 layers, 1000 steps ≈ 20 min, 8.2 GB peak.
+
+## Quick Start
+
+```bash
+# Basic training
+hermetic train ./curated-data \
+  --model mlx-community/Qwen3-8B-4bit \
+  --lora-layers 4 \
+  --max-steps 1000 \
+  --batch-size 1 \
+  --export-gguf
+```
+
+## Configuration
+
+### CLI Options
+
+```bash
+hermetic train [OPTIONS] INPUT_PATH
+
+Options:
+  -o, --output PATH           Output directory (default: ./hermetic-training-output)
+  -m, --model MODEL           Base model (HF repo or local path)
+  -b, --backend BACKEND       Training backend: mlx-tune, unsloth-modal, axolotl
+  --lora-r INT                LoRA rank (default: 16)
+  --lora-alpha INT            LoRA alpha (default: 32)
+  --lora-layers INT           Number of layers (default: 4)
+  --lora-dropout FLOAT        Dropout (default: 0.05)
+  --lr FLOAT                  Learning rate (default: 2e-4)
+  --batch-size INT            Batch size (default: 1)
+  --max-steps INT             Max steps (default: 1000)
+  --max-seq-length INT        Max sequence length (default: 1024)
+  --grad-accum INT            Gradient accumulation (default: 4)
+  --export-gguf/--no-export-gguf
+  --quantize STRING           GGUF quantization (default: q4_k_m)
+```
+
+### LoRA Config Reference
+
+| Parameter | Default | Range | Effect |
+|-----------|---------|-------|--------|
+| `r` (rank) | 16 | 8-64 | Capacity vs. overfitting |
+| `alpha` | 32 | 16-64 | Scaling factor (typically 2*r) |
+| `dropout` | 0.05 | 0-0.1 | Regularization |
+| `target_modules` | `["q_proj", "v_proj"]` | — | Attention projections |
+| `layers` | 4 | 1-32 | Depth of adaptation |
+
+### Recommended Configs
+
+| Model | Config |
+|-------|--------|
+| Qwen3-8B-4bit | `r=16, alpha=32, layers=4, lr=2e-4` |
+| Llama-3.1-8B-4bit | `r=16, alpha=32, layers=4, lr=1e-4` |
+| Gemma-2-9B-4bit | `r=16, alpha=32, layers=4, lr=2e-4` |
+| Small (<3B) | `r=32, alpha=64, layers=8, lr=5e-4` |
+
+## Training Output
+
+```text
+./hermetic-training-output/
++-- adapters/
+|   +-- adapters.safetensors    # LoRA weights
+|   +-- adapter_config.json     # LoRA config (critical for fuse)
++-- gguf/
+|   +-- model-q4_k_m.gguf       # Quantized GGUF
++-- training_metadata.json      # Full run metadata
++-- checkpoints/                # Intermediate saves (if enabled)
+```
+
+## GGUF Export
+
+```bash
+# Automatic with --export-gguf
+hermetic train ./data --model mlx-community/Qwen3-8B-4bit --export-gguf
+```
+
+**Supported models**: Qwen, Llama, Mistral, Phi, Yi, DeepSeek
+**Unsupported**: Gemma 3/4 (upstream MLX limitation)
+
+### Serve with Ollama
+
+```bash
+ollama create hermetic -f ./hermetic-training-output/gguf/Modelfile
+ollama run hermetic
+```
+
+## Memory Management
+
+### RAM Budgeting (32GB M1 Max)
+
+```text
+Total: 32 GB
++-- Inference servers:     ~12 GB
++-- Reserved for inference: 16 GB
++-- Training budget:       14 GB
++-- Safety margin:          2 GB
+```
+
+### Pre-training Guard
+
+```text
+# hermetic.yaml
+train:
+  gpu_budget:
+    reserved_for_inference: "16GB"
+    max_training: "14GB"
+    pause_threshold: "8GB"
+```
+
+## Troubleshooting
+
+| Error | Fix |
+|-------|-----|
+| `OMP: Error #15` | `export KMP_DUPLICATE_LIB_OK=TRUE` |
+| `ModuleNotFoundError: mlx.optim` | Use `mlx.optimizers` (MLX >=0.23) |
+| `adapter_config.json not found` | Ensure `save_config()` called after training |
+| `Model type X not supported for GGUF` | Use supported base model (Qwen/Llama) |
+| `HF 401 Unauthorized` | Local model path or `huggingface-cli login` |
+| OOM on 32GB | Reduce `layers`, `batch_size`, or `max_seq_length` |
+
+## Next Steps
+
+- [Config Schema](/docs/reference/config/) — Full hermetic.yaml reference
+- [Cloud Backends](/docs/training/cloud/) — Unsloth Modal, Axolotl
+- [Hermes Integration](/docs/hermes/plugin/) — Deploy trained adapter
+</BaseLayout>

@@ -1,0 +1,170 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Configuration Reference" description="Complete hermetic.yaml schema reference">
+
+<div class="docs-content">
+
+<header class="page-header">
+	<h1>Configuration Reference</h1>
+	<p class="description">Complete hermetic.yaml schema reference</p>
+</header>
+
+## Full Schema
+
+```text
+# hermetic.yaml - Complete configuration
+
+import:
+  sources:
+    - path: "~/exports/chatgpt/conversations.json"
+    - path: "~/exports/claude/conversations.json"
+    - path: "~/exports/gemini/Takeout/Gemini/"
+
+curate:
+  deduplicate:
+    enabled: true
+    exact_match: true
+    semantic_threshold: 0.95
+  pii_redact:
+    enabled: true
+    entities:
+      - PERSON
+      - EMAIL_ADDRESS
+      - PHONE_NUMBER
+      - LOCATION
+      - CREDIT_CARD
+      - CRYPTO_WALLET
+      - IP_ADDRESS
+      - URL
+    custom_patterns: []
+  quality:
+    enabled: true
+    min_messages: 2
+    max_tokens: 8192
+    min_user_ratio: 0.1
+    max_user_ratio: 0.9
+    min_avg_message_len: 10
+
+format:
+  primary: "sharegpt"
+  also: ["dpo", "grpo"]
+  split:
+    train: 0.85
+    validation: 0.10
+    test: 0.05
+  random_seed: 42
+
+train:
+  backend: "mlx-tune"
+  model: "mlx-community/Qwen3-8B-4bit"
+  mlx_tune: {}
+  unsloth_modal:
+    gpu: "H100"
+    timeout: 3600
+  axolotl:
+    config_path: "./axolotl-config.yml"
+  lora:
+    r: 16
+    alpha: 32
+    target_modules:
+      - "q_proj"
+      - "v_proj"
+    layers: 4
+    dropout: 0.05
+    use_dora: false
+  schedule:
+    max_steps: 1000
+    learning_rate: 2e-4
+    batch_size: 1
+    max_seq_length: 1024
+    grad_accum: 4
+    grad_checkpoint: true
+    warmup_steps: 50
+    lr_scheduler: "cosine"
+    weight_decay: 0.01
+    save_every: 100
+    eval_every: 100
+    log_every: 10
+  gpu_budget:
+    reserved_for_inference: "16GB"
+    max_training: "14GB"
+    pause_threshold: "8GB"
+  export:
+    gguf: true
+    quantize: "q4_k_m"
+    ollama: true
+
+output:
+  formats:
+    - "mlx_adapters"
+    - "gguf_4bit"
+  ollama:
+    enabled: true
+    tag: "hermetic:latest"
+    modelfile_template: |
+      FROM {{gguf_path}}
+      TEMPLATE "{{chat_template}}"
+      PARAMETER stop "{{stop_tokens}}"
+```
+
+## Environment Variable Overrides
+
+```bash
+HERMETIC_TRAIN_BACKEND=unsloth-modal \
+HERMETIC_TRAIN_MODEL=unsloth/Qwen3-8B-bnb-4bit \
+HERMETIC_TRAIN_LORA_LAYERS=8 \
+hermetic train ./data -c hermetic.yaml
+```
+
+Pattern: `HERMETIC_<SECTION>_<FIELD>` (uppercase, nested with `_`)
+
+## Example: Minimal Config
+
+```text
+import:
+  sources:
+    - path: "~/exports/chatgpt.json"
+
+train:
+  model: "mlx-community/Qwen3-8B-4bit"
+  lora:
+    layers: 4
+```
+
+## Example: Production Config
+
+```text
+import:
+  sources:
+    - path: "~/exports/chatgpt/conversations.json"
+    - path: "~/exports/claude/conversations.json"
+
+curate:
+  deduplicate:
+    semantic_threshold: 0.93
+  pii_redact:
+    custom_patterns:
+      - "API_KEY_[A-Z0-9]{32}"
+
+train:
+  backend: "mlx-tune"
+  model: "mlx-community/Qwen3-8B-4bit"
+  lora:
+    r: 16
+    alpha: 32
+    layers: 4
+  schedule:
+    max_steps: 2000
+    learning_rate: 1.5e-4
+  export:
+    gguf: true
+    quantize: "q4_k_m"
+
+output:
+  formats: ["mlx_adapters", "gguf_4bit"]
+  ollama:
+    tag: "hermetic:production"
+```
+</BaseLayout>

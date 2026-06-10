@@ -1,0 +1,92 @@
+<!DOCTYPE html><meta charset="utf-8"><script type="module" src="/docs/_astro/page.BPovHEMM.js"></script><h1 id="getting-started">Getting Started</h1>
+<p>Welcome to Hermetic — the pipeline for turning your AI chat exports into personalized Hermes agents.</p>
+<h2 id="quick-links">Quick Links</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Guide</th><th>Description</th></tr></thead><tbody><tr><td><a href="/docs/install/">Installation</a></td><td>Install Hermetic and set up your environment</td></tr><tr><td><a href="/docs/quickstart/">Quick Start</a></td><td>Run your first pipeline in 5 minutes</td></tr></tbody></table>
+<h2 id="pipeline-overview">Pipeline Overview</h2>
+<div class="expressive-code"><link rel="stylesheet" href="/docs/_astro/ec.v4551.css"><script type="module" src="/docs/_astro/ec.0vx5m.js"></script><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="text"><code><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">Flowchart LR</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">    </span></span><span style="--0:#d6deeb;--1:#403f53">A[ChatGPT Export] --> D[Normalize]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">    </span></span><span style="--0:#d6deeb;--1:#403f53">B[Claude Export] --> D</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">    </span></span><span style="--0:#d6deeb;--1:#403f53">C[Gemini Export] --> D</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">    </span></span><span style="--0:#d6deeb;--1:#403f53">D --> E[Curate&#x3C;br/>Dedup · PII · Quality]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">    </span></span><span style="--0:#d6deeb;--1:#403f53">E --> F[Format&#x3C;br/>ShareGPT · DPO · GRPO]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">    </span></span><span style="--0:#d6deeb;--1:#403f53">F --> G[Train&#x3C;br/>MLX LoRA]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">    </span></span><span style="--0:#d6deeb;--1:#403f53">G --> H[Adapter]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#d6deeb;--1:#403f53">    </span></span><span style="--0:#d6deeb;--1:#403f53">H --> I[Hermes Agent]</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="Flowchart LR    A[ChatGPT Export] --> D[Normalize]    B[Claude Export] --> D    C[Gemini Export] --> D    D --> E[Curate<br/>Dedup · PII · Quality]    E --> F[Format<br/>ShareGPT · DPO · GRPO]    F --> G[Train<br/>MLX LoRA]    G --> H[Adapter]    H --> I[Hermes Agent]"><div></div></button></div></figure></div>
+<h2 id="why-hermetic">Why Hermetic?</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Problem</th><th>Solution</th></tr></thead><tbody><tr><td>Chat exports trapped in vendor formats</td><td><strong>4 importers</strong> → unified Conversation schema</td></tr><tr><td>Garbage in, garbage out</td><td><strong>Curation pipeline</strong> — exact/semantic dedup, PII redaction, quality filters</td></tr><tr><td>Training formats differ</td><td><strong>6 formatters</strong> — ShareGPT, DPO, GRPO, JSONL, Alpaca, HF</td></tr><tr><td>Local training is hard</td><td><strong>MLX backend</strong> — native Apple Silicon, 32GB M1 Max validated</td></tr><tr><td>No path to personalized agent</td><td><strong>Hermes plugin</strong> — <code>hermes hermetic import/train/status</code></td></tr></tbody></table>
+<h2 id="quick-start">Quick Start</h2>
+<div class="expressive-code"><figure class="frame is-terminal not-content"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bash"><code><div class="ec-line"><div class="code"><span style="--0:#919F9F;--1:#5F636F"># Install</span></div></div><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">pip</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">install</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">-e</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">/path/to/hermetic</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#919F9F;--1:#5F636F"># Import &#x26; curate your exports</span></div></div><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">hermetic</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">import</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">~/exports/chatgpt.json</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--curate</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">-o</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">./hermetic-data</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#919F9F;--1:#5F636F"># Train a LoRA adapter (Apple Silicon)</span></div></div><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">hermetic</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">train</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">./hermetic-data</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--model</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">mlx-community/Qwen3-8B-4bit</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--lora-layers</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#F78C6C;--1:#AA0982">4</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#919F9F;--1:#5F636F"># Or use the Hermes plugin</span></div></div><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">hermes</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">skills</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">install</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">official/mlops/hermetic</span></div></div><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">hermes</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">hermetic</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">import</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">~/exports/chatgpt.json</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--curate</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="pip install -e /path/to/hermetichermetic import ~/exports/chatgpt.json --curate -o ./hermetic-datahermetic train ./hermetic-data --model mlx-community/Qwen3-8B-4bit --lora-layers 4hermes skills install official/mlops/hermetichermes hermetic import ~/exports/chatgpt.json --curate"><div></div></button></div></figure></div>
+<h2 id="pipeline-overview-1">Pipeline Overview</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Stage</th><th>Description</th></tr></thead><tbody><tr><td><strong>Import</strong></td><td>ChatGPT, Claude, Gemini, Hermes exports normalized to <code>Conversation</code> schema</td></tr><tr><td><strong>Curate</strong></td><td>Exact dedup, semantic dedup (embeddings), Presidio PII, quality filters</td></tr><tr><td><strong>Format</strong></td><td>ShareGPT, DPO, GRPO, JSONL, Alpaca, HF Datasets</td></tr><tr><td><strong>Train</strong></td><td>MLX LoRA on Apple Silicon; Unsloth/Axolotl cloud backends stubbed</td></tr><tr><td><strong>Integrate</strong></td><td>Hermes plugin: `hermes hermetic import</td></tr></tbody></table>
+<hr>
+<p><strong>Hermetic</strong> is open-source (MIT). Built for <a href="https://github.com/NousResearch/hermes-agent">Hermes Agent</a> by Nous Research.</p>

@@ -1,0 +1,59 @@
+<!DOCTYPE html><meta charset="utf-8"><script type="module" src="/docs/_astro/page.BPovHEMM.js"></script><h1 id="mlx-lora-training">MLX LoRA Training</h1>
+<h2 id="overview">Overview</h2>
+<p>MLX is Apple’s native array framework. Hermetic’s MLX backend (<code>mlx-tune</code>) provides:</p>
+<ul>
+<li><strong>Native Apple Silicon</strong> — No CUDA, no Docker, optimal Metal performance</li>
+<li><strong>QLoRA 4-bit</strong> — 7B/8B models on 32GB RAM</li>
+<li><strong>LoRA/DoRA</strong> — Configurable rank, alpha, target modules, layers</li>
+<li><strong>GGUF Export</strong> — Ready for Ollama, llama.cpp</li>
+</ul>
+<h2 id="hardware-requirements">Hardware Requirements</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Model Size</th><th>Quantization</th><th>LoRA Layers</th><th>Peak RAM</th><th>Time (1K steps)</th></tr></thead><tbody><tr><td>1.5B</td><td>4-bit</td><td>4-8</td><td>~3 GB</td><td>~2 min</td></tr><tr><td>3B</td><td>4-bit</td><td>4-8</td><td>~5 GB</td><td>~5 min</td></tr><tr><td>7B</td><td>4-bit</td><td>4</td><td>~10 GB</td><td>~15 min</td></tr><tr><td>8B</td><td>4-bit</td><td>2-4</td><td>~10 GB</td><td>~20 min</td></tr><tr><td>13B</td><td>4-bit</td><td>1-2</td><td>~16 GB</td><td>~45 min</td></tr></tbody></table>
+<p><strong>Validated</strong>: 32GB M1 Max — 8B QLoRA, 4 layers, 1000 steps ≈ 20 min, 8.2 GB peak.</p>

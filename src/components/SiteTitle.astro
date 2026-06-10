@@ -1,0 +1,40 @@
+---
+const { siteTitle } = Astro.locals.starlightRoute;
+---
+
+<a href="/" class="site-title sl-flex">
+	<span class="logo-mark" translate="no">Hermetic</span>
+</a>
+
+<style>
+	@layer starlight.core {
+		.site-title {
+			align-items: center;
+			gap: var(--sl-nav-gap);
+			font-size: var(--sl-text-h3);
+			font-weight: 400;
+			color: var(--sl-color-text-accent);
+			text-decoration: none;
+			white-space: nowrap;
+			min-width: 0;
+			padding: 0.25rem 0;
+		}
+		.logo-mark {
+			font-family: 'Brush Script MT', 'Brush Script Std', 'Snell Roundhand', cursive;
+			font-size: clamp(1.4rem, 3vw, 2rem);
+			font-weight: 400;
+			letter-spacing: 0.02em;
+			line-height: 1.1;
+			color: var(--sl-color-accent);
+			text-shadow: 0 0 20px color-mix(in srgb, var(--sl-color-accent) 40%, transparent);
+		}
+		@media (max-width: 768px) {
+			.logo-mark {
+				font-size: 1.3rem;
+			}
+		}
+		span {
+			overflow: hidden;
+		}
+	}
+</style>

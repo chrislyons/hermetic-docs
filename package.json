@@ -1,0 +1,22 @@
+{
+  "name": "hermetic-docs",
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name=hermetic-docs"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.37.7",
+    "astro": "^5.18.0",
+    "remark-code-titles": "^0.1.2",
+    "sharp": "0.34.5"
+  },
+  "devDependencies": {
+    "wrangler": "3.114.17"
+  }
+}

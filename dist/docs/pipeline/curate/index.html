@@ -1,0 +1,137 @@
+<!DOCTYPE html><meta charset="utf-8"><script type="module" src="/docs/_astro/page.BPovHEMM.js"></script><h1 id="curation">Curation</h1>
+<h2 id="curation-stages">Curation Stages</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Stage</th><th>Purpose</th><th>Method</th><th>Config</th></tr></thead><tbody><tr><td>Exact Dedup</td><td>Remove identical conversations</td><td>SHA-256 content hash</td><td><code>deduplicate.exact_match</code></td></tr><tr><td>Semantic Dedup</td><td>Remove near-duplicates</td><td>Sentence embeddings + cosine similarity</td><td><code>deduplicate.semantic_threshold</code></td></tr><tr><td>PII Redaction</td><td>Remove personal info</td><td>Microsoft Presidio</td><td><code>pii_redact.enabled</code></td></tr><tr><td>Quality Filter</td><td>Remove low-quality data</td><td>Heuristics (length, ratio, etc.)</td><td><code>quality.enabled</code></td></tr></tbody></table>
+<h2 id="configuration">Configuration</h2>
+<div class="expressive-code"><link rel="stylesheet" href="/docs/_astro/ec.v4551.css"><script type="module" src="/docs/_astro/ec.0vx5m.js"></script><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="yaml"><code><div class="ec-line"><div class="code"><span style="--0:#7FDBCA;--1:#111111">curate</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">deduplicate</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">exact_match</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">semantic_threshold</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">0.95</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#919F9F;--1:#5F636F"># model: "all-MiniLM-L6-v2"</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">pii_redact</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">entities</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">      </span></span><span style="--0:#D6DEEB;--1:#403F53">- </span><span style="--0:#ECC48D;--1:#3B61B0">PERSON</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">      </span></span><span style="--0:#D6DEEB;--1:#403F53">- </span><span style="--0:#ECC48D;--1:#3B61B0">EMAIL_ADDRESS</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">      </span></span><span style="--0:#D6DEEB;--1:#403F53">- </span><span style="--0:#ECC48D;--1:#3B61B0">PHONE_NUMBER</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">      </span></span><span style="--0:#D6DEEB;--1:#403F53">- </span><span style="--0:#ECC48D;--1:#3B61B0">LOCATION</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">      </span></span><span style="--0:#D6DEEB;--1:#403F53">- </span><span style="--0:#ECC48D;--1:#3B61B0">CREDIT_CARD</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">      </span></span><span style="--0:#D6DEEB;--1:#403F53">- </span><span style="--0:#ECC48D;--1:#3B61B0">CRYPTO_WALLET</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">      </span></span><span style="--0:#D6DEEB;--1:#403F53">- </span><span style="--0:#ECC48D;--1:#3B61B0">IP_ADDRESS</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#D6DEEB;--1:#403F53">      </span></span><span style="--0:#D6DEEB;--1:#403F53">- </span><span style="--0:#ECC48D;--1:#3B61B0">URL</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">custom_patterns</span><span style="--0:#D6DEEB;--1:#403F53">: []</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#7FDBCA;--1:#111111">quality</span><span style="--0:#D6DEEB;--1:#403F53">:</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">enabled</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">min_messages</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">2</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">max_tokens</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">8192</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">min_user_ratio</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">0.1</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">max_user_ratio</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">0.9</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">min_avg_message_len</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">10</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">max_avg_message_len</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#F78C6C;--1:#AA0982">2000</span></div></div><div class="ec-line"><div class="code"><span class="indent">    </span><span style="--0:#7FDBCA;--1:#111111">remove_system_only</span><span style="--0:#D6DEEB;--1:#403F53">: </span><span style="--0:#FF6A83;--1:#A24848">true</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="curate:  deduplicate:    enabled: true    exact_match: true    semantic_threshold: 0.95    # model: &#x22;all-MiniLM-L6-v2&#x22;  pii_redact:    enabled: true    entities:      - PERSON      - EMAIL_ADDRESS      - PHONE_NUMBER      - LOCATION      - CREDIT_CARD      - CRYPTO_WALLET      - IP_ADDRESS      - URL    custom_patterns: []  quality:    enabled: true    min_messages: 2    max_tokens: 8192    min_user_ratio: 0.1    max_user_ratio: 0.9    min_avg_message_len: 10    max_avg_message_len: 2000    remove_system_only: true"><div></div></button></div></figure></div>
+<h2 id="exact-deduplication">Exact Deduplication</h2>
+<p>Computes SHA-256 hash of normalized conversation content. Removes exact duplicates (same messages, same order). Fast: O(n) with hash set lookup. Typical removal: 3-8% of conversations.</p>
+<h2 id="semantic-deduplication">Semantic Deduplication</h2>
+<p>Uses <code>sentence-transformers/all-MiniLM-L6-v2</code> embeddings. Computes cosine similarity between conversation embeddings. Pairs above threshold (default 0.95) marked as duplicates. Keeps first occurrence, removes subsequent. Typical removal: 2-5% additional.</p>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="python"><code><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">embeddings </span><span style="--0:#C792EA;--1:#8844AE">=</span><span style="--0:#D6DEEB;--1:#403F53"> model.</span><span style="--0:#B2CCD6;--1:#096E72">encode</span><span style="--0:#D6DEEB;--1:#403F53">(</span><span style="--0:#82AAFF;--1:#3B61B0">conversations</span><span style="--0:#D6DEEB;--1:#403F53">)</span></div></div><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">similarities </span><span style="--0:#C792EA;--1:#8844AE">=</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#B2CCD6;--1:#096E72">cosine_similarity</span><span style="--0:#D6DEEB;--1:#403F53">(</span><span style="--0:#82AAFF;--1:#3B61B0">embeddings</span><span style="--0:#D6DEEB;--1:#403F53">)</span></div></div><div class="ec-line"><div class="code"><span style="--0:#D6DEEB;--1:#403F53">duplicates </span><span style="--0:#C792EA;--1:#8844AE">=</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#B2CCD6;--1:#096E72">find_pairs</span><span style="--0:#D6DEEB;--1:#403F53">(</span><span style="--0:#82AAFF;--1:#3B61B0">similarities </span><span style="--0:#C792EA;--1:#8844AE">></span><span style="--0:#82AAFF;--1:#3B61B0"> threshold</span><span style="--0:#D6DEEB;--1:#403F53">)</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="embeddings = model.encode(conversations)similarities = cosine_similarity(embeddings)duplicates = find_pairs(similarities > threshold)"><div></div></button></div></figure></div>
+<h2 id="pii-redaction-presidio">PII Redaction (Presidio)</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Entity Type</th><th>Example</th><th>Action</th></tr></thead><tbody><tr><td>PERSON</td><td>”John Smith”</td><td>Replace with <code>[PERSON]</code></td></tr><tr><td>EMAIL_ADDRESS</td><td>”<a href="mailto:john@example.com">john@example.com</a>”</td><td>Replace with <code>[EMAIL]</code></td></tr><tr><td>PHONE_NUMBER</td><td>”+1-555-123-4567”</td><td>Replace with <code>[PHONE]</code></td></tr><tr><td>LOCATION</td><td>”San Francisco”</td><td>Replace with <code>[LOCATION]</code></td></tr><tr><td>CREDIT_CARD</td><td>”4242 4242 4242 4242”</td><td>Replace with <code>[CREDIT_CARD]</code></td></tr><tr><td>CRYPTO_WALLET</td><td>”0x742d35Cc…”</td><td>Replace with <code>[WALLET]</code></td></tr></tbody></table>
+<p>Custom patterns via <code>pii_redact.custom_patterns</code>.</p>
+<h2 id="quality-filters">Quality Filters</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Filter</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><code>min_messages</code></td><td>Minimum conversation turns</td><td>2</td></tr><tr><td><code>max_tokens</code></td><td>Maximum tokens (estimated)</td><td>8192</td></tr><tr><td><code>min_user_ratio</code></td><td>User/(User+Assistant) minimum</td><td>0.1</td></tr><tr><td><code>max_user_ratio</code></td><td>User/(User+Assistant) maximum</td><td>0.9</td></tr><tr><td><code>min_avg_message_len</code></td><td>Average chars per message</td><td>10</td></tr></tbody></table>
+<h2 id="running-curation">Running Curation</h2>
+<h3 id="standalone">Standalone</h3>
+<div class="expressive-code"><figure class="frame is-terminal not-content"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bash"><code><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">hermetic</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">curate</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">./hermetic-output</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--dedup-exact</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--dedup-semantic</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--pii-redact</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--quality-filter</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">-o</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">./curated</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="hermetic curate ./hermetic-output --dedup-exact --dedup-semantic --pii-redact --quality-filter -o ./curated"><div></div></button></div></figure></div>
+<h3 id="during-import">During Import</h3>
+<div class="expressive-code"><figure class="frame is-terminal not-content"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bash"><code><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">hermetic</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">import</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">~/exports/chatgpt.json</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--curate</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">-o</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">./output</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="hermetic import ~/exports/chatgpt.json --curate -o ./output"><div></div></button></div></figure></div>
+<h2 id="curation-statistics">Curation Statistics</h2>
+<div class="expressive-code"><figure class="frame not-content"><figcaption class="header"></figcaption><pre data-language="text"><code><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">Curation Stats</span></div></div><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">Stage                  Input   Output  Removed</span></div></div><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">Exact Dedup            1,247   1,189   58 (4.7%)</span></div></div><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">Semantic Dedup (0.95)  1,189   1,156   33 (2.8%)</span></div></div><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">PII Redaction          1,156   1,156   12 entities</span></div></div><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">Quality Filter         1,156   1,134   22 (1.9%)</span></div></div><div class="ec-line"><div class="code"><span style="--0:#d6deeb;--1:#403f53">TOTAL                  1,247   1,134   113 (9.1%)</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="Curation StatsStage                  Input   Output  RemovedExact Dedup            1,247   1,189   58 (4.7%)Semantic Dedup (0.95)  1,189   1,156   33 (2.8%)PII Redaction          1,156   1,156   12 entitiesQuality Filter         1,156   1,134   22 (1.9%)TOTAL                  1,247   1,134   113 (9.1%)"><div></div></button></div></figure></div>
+<h2 id="cli-reference">CLI Reference</h2>
+<div class="expressive-code"><figure class="frame is-terminal not-content"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bash"><code><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">hermetic</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">curate</span><span style="--0:#D6DEEB;--1:#403F53"> [OPTIONS] INPUT_PATH</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#82AAFF;--1:#3B61B0">Options:</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#82AAFF;--1:#3B61B0">-o,</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--output</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">PATH</span><span style="--0:#D6DEEB;--1:#403F53">           </span><span style="--0:#ECC48D;--1:#3B61B0">Output</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">directory</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#82AAFF;--1:#3B61B0">-f,</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--format</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">FORMAT</span><span style="--0:#D6DEEB;--1:#403F53">         </span><span style="--0:#ECC48D;--1:#3B61B0">Output</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">format</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#82AAFF;--1:#3B61B0">--dedup-exact/--no-dedup-exact</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#82AAFF;--1:#3B61B0">--dedup-semantic/--no-dedup-semantic</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#82AAFF;--1:#3B61B0">--semantic-threshold</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">FLOAT</span><span style="--0:#D6DEEB;--1:#403F53">  </span><span style="--0:#ECC48D;--1:#3B61B0">Default:</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#F78C6C;--1:#AA0982">0.95</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#82AAFF;--1:#3B61B0">--pii-redact/--no-pii-redact</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#82AAFF;--1:#3B61B0">--quality-filter/--no-quality-filter</span></div></div><div class="ec-line"><div class="code"><span class="indent">  </span><span style="--0:#82AAFF;--1:#3B61B0">-c,</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#82AAFF;--1:#3B61B0">--config</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">PATH</span><span style="--0:#D6DEEB;--1:#403F53">           </span><span style="--0:#ECC48D;--1:#3B61B0">Config</span><span style="--0:#D6DEEB;--1:#403F53"> </span><span style="--0:#ECC48D;--1:#3B61B0">file</span></div></div></code></pre><div class="copy"><div aria-live="polite"></div><button title="Copy to clipboard" data-copied="Copied!" data-code="hermetic curate [OPTIONS] INPUT_PATHOptions:  -o, --output PATH           Output directory  -f, --format FORMAT         Output format  --dedup-exact/--no-dedup-exact  --dedup-semantic/--no-dedup-semantic  --semantic-threshold FLOAT  Default: 0.95  --pii-redact/--no-pii-redact  --quality-filter/--no-quality-filter  -c, --config PATH           Config file"><div></div></button></div></figure></div>

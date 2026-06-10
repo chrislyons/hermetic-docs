@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Cloud Training Backends" description="Unsloth Modal and Axolotl for non-Apple Silicon training">
+
+<div class="docs-content">
+
+<header class="page-header">
+	<h1>Cloud Training Backends</h1>
+	<p class="description">Unsloth Modal and Axolotl for non-Apple Silicon training</p>
+</header>
+
+## Overview
+
+For users without Apple Silicon, Hermetic provides cloud training backends:
+
+| Backend | Platform | Best For | Status |
+|---------|----------|----------|--------|
+| Unsloth Modal | Modal.com (GPU cloud) | Fastest LoRA, 2-5x speedup | Production |
+| Axolotl | Any NVIDIA GPU | Nous/Hermes parity, full YAML config | Production |
+| MLX-Tune | Apple Silicon only | Local, private, free | Production |
+
+## Unsloth Modal
+
+[Modal](https://modal.com) provides serverless GPU compute. Unsloth is optimized for fast LoRA.
+
+### Setup
+
+```bash
+pip install modal
+modal token new
+modal run modal_worker.py test_gpu
+```
+
+### Running
+
+```bash
+hermetic train ./data -c hermetic.yaml
+```
+
+### Modal GPU Options
+
+| GPU | VRAM | Cost/hr | Best For |
+|-----|------|---------|----------|
+| T4 | 16GB | $0.73 | Small models, testing |
+| A10G | 24GB | $1.30 | 7B-13B models |
+| A100 | 40GB | $2.50 | Large models, speed |
+| H100 | 80GB | $4.50 | Fastest, 70B+ models |
+
+## Axolotl
+
+[Axolotl](https://github.com/OpenAccess-AI-Collective/axolotl) is the standard for Hermes/Mistral training.
+
+### Setup
+
+```bash
+pip install axolotl
+```
+
+See Axolotl documentation for full configuration options.
+
+## Backend Comparison
+
+MLX-Tune: Apple Silicon, 250 tok/s M1 Max, QLoRA, CLI YAML, High parity, GGUF limited, Free local
+Unsloth Modal: NVIDIA Modal, 1000 tok/s H100, QLoRA, CLI YAML, High parity, GGUF Yes, Pay-per-use
+Axolotl: NVIDIA local/cloud, 800 tok/s A100, QLoRA LoRA, Full YAML, Native parity, GGUF Yes, Free local / Cloud
+
+## Choosing a Backend
+
+Apple Silicon (M1-M4 Max/Ultra) -> MLX-Tune (free, local, private)
+NVIDIA GPU + want speed -> Unsloth Modal (pay-per-use)
+NVIDIA GPU + need Hermes parity -> Axolotl (full control)
+No GPU, want cloud -> Unsloth Modal (serverless)
+Enterprise / Compliance -> Axolotl on-prem
+
+## Multi-Backend Config
+
+```text
+# hermetic.yaml - switch backends via env
+train:
+  backend: "${HERMETIC_BACKEND:-mlx-tune}"
+  model: "${HERMETIC_MODEL:-mlx-community/Qwen3-8B-4bit}"
+```
+
+Local:
+```bash
+HERMETIC_BACKEND=mlx-tune hermetic train ./data
+```
+
+Cloud:
+```bash
+HERMETIC_BACKEND=unsloth-modal HERMETIC_MODEL=unsloth/Qwen3-8B-bnb-4bit hermetic train ./data
+```
+
+## Next Steps
+
+- [MLX Training Guide](/docs/training/mlx/) - Local Apple Silicon
+- [Config Reference](/docs/reference/config/) - Full hermetic.yaml schema
+- [Hermes Integration](/docs/hermes/plugin/) - Deploy trained adapter
+</BaseLayout>

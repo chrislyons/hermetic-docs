@@ -1,0 +1,23 @@
+---
+import DefaultHeader from '@astrojs/starlight/components/Header.astro';
+const { localeRoute } = Astro.locals.starlightRoute;
+---
+
+<DefaultHeader>
+	<template slot="after-nav">
+		<div class="header-accent-line" aria-hidden="true"></div>
+	</template>
+</DefaultHeader>
+
+<style>
+	@layer starlight.core {
+		.header-accent-line {
+			height: 1px;
+			background: linear-gradient(90deg,
+				transparent 0%,
+				color-mix(in srgb, var(--sl-color-accent) 30%, transparent) 50%,
+				transparent 100%
+			);
+		}
+	}
+</style>
