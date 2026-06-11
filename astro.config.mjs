@@ -38,47 +38,47 @@ export default defineConfig({
 				{
 					label: 'Getting Started',
 					items: [
-						{ label: 'Introduction', slug: 'getting-started.md' },
-						{ label: 'Installation', slug: 'getting-started/install.md' },
-						{ label: 'Quick Start', slug: 'getting-started/quickstart.md' },
+						{ label: 'Introduction', slug: 'getting-started/index' },
+						{ label: 'Installation', slug: 'getting-started/install' },
+						{ label: 'Quick Start', slug: 'getting-started/quickstart' },
 					],
 				},
 				{
 					label: 'Pipeline',
 					items: [
-						{ label: 'Overview', slug: 'pipeline.md' },
-						{ label: 'Import', slug: 'pipeline/import.md' },
-						{ label: 'Curation', slug: 'pipeline/curate.md' },
-						{ label: 'Format', slug: 'pipeline/format.md' },
+						{ label: 'Overview', slug: 'pipeline' },
+						{ label: 'Import', slug: 'pipeline/import' },
+						{ label: 'Curation', slug: 'pipeline/curate' },
+						{ label: 'Format', slug: 'pipeline/format' },
 					],
 				},
 				{
 					label: 'Training',
 					items: [
-						{ label: 'Overview', slug: 'training.md' },
-						{ label: 'MLX LoRA', slug: 'training/mlx.md' },
-						{ label: 'Cloud Backends', slug: 'training/cloud.md' },
+						{ label: 'Overview', slug: 'training' },
+						{ label: 'MLX LoRA', slug: 'training/mlx' },
+						{ label: 'Cloud Backends', slug: 'training/cloud' },
 					],
 				},
 				{
 					label: 'Hermes Integration',
 					items: [
-						{ label: 'Overview', slug: 'hermes.md' },
-						{ label: 'Plugin', slug: 'hermes/plugin.md' },
+						{ label: 'Overview', slug: 'hermes' },
+						{ label: 'Plugin', slug: 'hermes/plugin' },
 					],
 				},
 				{
 					label: 'Reference',
 					items: [
-						{ label: 'Overview', slug: 'reference.md' },
-						{ label: 'Config Schema', slug: 'reference/config.md' },
+						{ label: 'Overview', slug: 'reference' },
+						{ label: 'Config Schema', slug: 'reference/config' },
 					],
 				},
 				{
 					label: 'Architecture',
 					items: [
-						{ label: 'Overview', slug: 'arch.md' },
-						{ label: 'System Overview', slug: 'arch/overview.md' },
+						{ label: 'Overview', slug: 'arch' },
+						{ label: 'System Overview', slug: 'arch/overview' },
 					],
 				},
 			],
