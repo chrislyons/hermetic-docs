@@ -37,49 +37,27 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Getting Started',
-					items: [
-						{ label: 'Introduction', slug: 'getting-started/index' },
-						{ label: 'Installation', slug: 'getting-started/install' },
-						{ label: 'Quick Start', slug: 'getting-started/quickstart' },
-					],
+					autogenerate: { directory: 'getting-started' },
 				},
 				{
 					label: 'Pipeline',
-					items: [
-						{ label: 'Overview', slug: 'pipeline' },
-						{ label: 'Import', slug: 'pipeline/import' },
-						{ label: 'Curation', slug: 'pipeline/curate' },
-						{ label: 'Format', slug: 'pipeline/format' },
-					],
+					autogenerate: { directory: 'pipeline' },
 				},
 				{
 					label: 'Training',
-					items: [
-						{ label: 'Overview', slug: 'training' },
-						{ label: 'MLX LoRA', slug: 'training/mlx' },
-						{ label: 'Cloud Backends', slug: 'training/cloud' },
-					],
+					autogenerate: { directory: 'training' },
 				},
 				{
 					label: 'Hermes Integration',
-					items: [
-						{ label: 'Overview', slug: 'hermes' },
-						{ label: 'Plugin', slug: 'hermes/plugin' },
-					],
+					autogenerate: { directory: 'hermes' },
 				},
 				{
 					label: 'Reference',
-					items: [
-						{ label: 'Overview', slug: 'reference' },
-						{ label: 'Config Schema', slug: 'reference/config' },
-					],
+					autogenerate: { directory: 'reference' },
 				},
 				{
 					label: 'Architecture',
-					items: [
-						{ label: 'Overview', slug: 'arch' },
-						{ label: 'System Overview', slug: 'arch/overview' },
-					],
+					autogenerate: { directory: 'arch' },
 				},
 			],
 		}),
